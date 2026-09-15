@@ -18,6 +18,7 @@ package uk.gov.hmrc.securitiestransferchargesearch.controllers
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.securitiestransferchargesearch.services.DashboardService
 import javax.inject.{Inject, Singleton}
@@ -26,38 +27,44 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DashboardController @Inject()(
                                      cc: ControllerComponents,
-                                     dashboardService: DashboardService
-                                   )(implicit ec: ExecutionContext) extends BackendController(cc) {
+                                     dashboardService: DashboardService,
+                                     val authConnector: AuthConnector
+                                   )(implicit ec: ExecutionContext) extends BackendController(cc) with AuthorisedFunctions {
 
   def getRecentTransactions(stcId: String, dateRange: String): Action[AnyContent] = Action.async { implicit request =>
-    dashboardService.getRecentTransactions(stcId, dateRange).map { transactions =>
-      Ok(Json.toJson(transactions))
-    }.recover {
-      case e: Exception => InternalServerError(Json.obj("error" -> e.getMessage))
-    }
+    authorised() {
+      dashboardService.getRecentTransactions(stcId, dateRange).map { transactions =>
+        Ok(Json.toJson(transactions))
+      }
+    }.recover(handleErrors)
   }
 
   def getReadyToPayTransactions(stcId: String): Action[AnyContent] = Action.async { implicit request =>
-    dashboardService.getReadyToPayTransactions(stcId).map { transactions =>
-      Ok(Json.toJson(transactions))
-    }.recover {
-      case e: Exception => InternalServerError(Json.obj("error" -> e.getMessage))
-    }
+    authorised() {
+      dashboardService.getReadyToPayTransactions(stcId).map { transactions =>
+        Ok(Json.toJson(transactions))
+      }
+    }.recover(handleErrors)
   }
 
   def getOverdueTransactions(stcId: String): Action[AnyContent] = Action.async { implicit request =>
-    dashboardService.getOverdueTransactions(stcId).map { transactions =>
-      Ok(Json.toJson(transactions))
-    }.recover {
-      case e: Exception => InternalServerError(Json.obj("error" -> e.getMessage))
-    }
+    authorised() {
+      dashboardService.getOverdueTransactions(stcId).map { transactions =>
+        Ok(Json.toJson(transactions))
+      }
+    }.recover(handleErrors)
   }
 
   def getContingentTransactions(stcId: String): Action[AnyContent] = Action.async { implicit request =>
-    dashboardService.getContingentTransactions(stcId).map { transactions =>
-      Ok(Json.toJson(transactions))
-    }.recover {
-      case e: Exception => InternalServerError(Json.obj("error" -> e.getMessage))
-    }
+    authorised() {
+      dashboardService.getContingentTransactions(stcId).map { transactions =>
+        Ok(Json.toJson(transactions))
+      }
+    }.recover(handleErrors)
+  }
+
+  private def handleErrors: PartialFunction[Throwable, play.api.mvc.Result] = {
+    case _: AuthorisationException => Unauthorized(Json.obj("error" -> "User is not authorised"))
+    case e: Exception              => InternalServerError(Json.obj("error" -> e.getMessage))
   }
 }

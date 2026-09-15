@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.securitiestransferchargesearch.config.AppConfig
 import uk.gov.hmrc.securitiestransferchargesearch.models.*
-
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
