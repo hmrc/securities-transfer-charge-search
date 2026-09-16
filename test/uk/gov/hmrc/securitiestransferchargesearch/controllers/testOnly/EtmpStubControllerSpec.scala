@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.securitiestransferchargesearch.controllers
+package uk.gov.hmrc.securitiestransferchargesearch.controllers.testOnly
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
 
 class EtmpStubControllerSpec extends AnyWordSpec with Matchers {
