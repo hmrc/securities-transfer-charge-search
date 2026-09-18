@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientV2Support
 import uk.gov.hmrc.securitiestransferchargesearch.config.AppConfig
+import org.scalatest.concurrent.IntegrationPatience
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,7 +41,8 @@ class DashboardServiceImplSpec
     with ScalaFutures
     with BeforeAndAfterAll
     with BeforeAndAfterEach
-    with HttpClientV2Support {
+    with HttpClientV2Support
+    with IntegrationPatience {
 
   private val wireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
 
