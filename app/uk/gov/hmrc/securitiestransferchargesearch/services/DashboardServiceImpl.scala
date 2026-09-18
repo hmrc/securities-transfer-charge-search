@@ -59,11 +59,15 @@ class DashboardServiceImpl @Inject()(
     val correlationId = UUID.randomUUID().toString
     val receiptDate = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
+    val etmpHeaders: Seq[(String, String)] = Seq(
+      "X-Originating-System" -> "MDTP-STC",
+      "X-Transmitting-System" -> "HIP",
+      "X-Receipt-Date" -> receiptDate,
+      "correlationid" -> correlationId
+    )
+
     httpClient.get(url)
-      .setHeader("X-Originating-System" -> "MDTP-STC")
-      .setHeader("X-Transmitting-System" -> "HIP")
-      .setHeader("X-Receipt-Date" -> receiptDate)
-      .setHeader("correlationid" -> correlationId)
+      .setHeader(etmpHeaders: _*)
       .execute[EtmpTransactionSummaryResponse]
   }
 }
