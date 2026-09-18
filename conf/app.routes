@@ -1,3 +1,6 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.securitiestransferchargesearch.controllers.MicroserviceHelloWorldController.hello
+GET   /dashboard/recent-transactions/:stcId        uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getRecentTransactions(stcId: String, dateRange: String)
+GET   /dashboard/ready-to-pay/:stcId               uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getReadyToPayTransactions(stcId: String)
+GET   /dashboard/overdue/:stcId                    uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getOverdueTransactions(stcId: String)
+GET   /dashboard/contingent/:stcId                 uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getContingentTransactions(stcId: String)

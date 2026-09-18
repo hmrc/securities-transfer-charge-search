@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.securitiestransferchargesearch.config
+package uk.gov.hmrc.securitiestransferchargesearch.services
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import uk.gov.hmrc.securitiestransferchargesearch.models.EtmpTransactionSummaryResponse
+import scala.concurrent.Future
 
-@Singleton
-class AppConfig @Inject()(config: Configuration):
-
-  val appName: String = config.get[String]("appName")
-
-  val etmpBaseUrl: String = config.get[String]("microservice.services.etmp.url")
+trait DashboardService {
+  def getRecentTransactions(stcId: String, submissionDateRange: String): Future[EtmpTransactionSummaryResponse]
+  def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
+  def getOverdueTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
+  def getContingentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
+}
