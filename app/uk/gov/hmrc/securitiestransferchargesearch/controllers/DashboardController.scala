@@ -63,6 +63,26 @@ class DashboardController @Inject()(
     }.recover(handleErrors)
   }
 
+
+
+  def getReadyToPayTransactionsCount(stcId: String): Action[AnyContent] = Action.async { implicit request =>
+    authorised() {
+      //TODO this will be replaced with a cache layer so that we are not calling etmp every time
+      dashboardService.getReadyToPayTransactions(stcId).map { result =>
+        Ok(Json.toJson(result.success.transactionsCount))
+      }
+    }
+  }
+
+  def getOverdueTransactionsCount(stcId: String): Action[AnyContent] = Action.async { implicit request =>
+    authorised() {
+      //TODO this will be replaced with a cache layer so that we are not calling etmp every time
+      dashboardService.getOverdueTransactions(stcId).map { result =>
+        Ok(Json.toJson(result.success.transactionsCount))
+      }
+    }
+  }
+
   private def handleErrors: PartialFunction[Throwable, play.api.mvc.Result] = {
     case _: AuthorisationException => Unauthorized(Json.obj("error" -> "User is not authorised"))
     case e: Exception              => InternalServerError(Json.obj("error" -> e.getMessage))

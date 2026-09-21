@@ -22,17 +22,18 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.{AuthConnector, MissingBearerToken}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.securitiestransferchargesearch.models._
+import uk.gov.hmrc.securitiestransferchargesearch.models.*
 import uk.gov.hmrc.securitiestransferchargesearch.services.DashboardService
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,6 +67,24 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
       charges = Some(Seq.empty)
     )
   )
+
+  private val response = EtmpTransactionSummaryResponse(
+    success = EtmpSuccessResponse(
+      processingDate = "2026-09-14T09:30:47Z",
+      transactionsCount = 1,
+      message = None,
+      transactionDetails = Some(Seq(EtmpTransactionDetail(submissionId = "123456789013",
+        submissionDate = LocalDate.now(),
+        clientReference = Some("Ref-12345"),
+        declareeName = "James",
+        utrn = "900459020010",
+        buyerNames = "Paul Mayne",
+        sellerNames = Some("John Brown"),
+        companyName = "Company 1"))),
+      charges = None
+    )
+  )
+
 
   "DashboardController" should {
 
@@ -124,6 +143,30 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
           .thenReturn(Future.successful(sampleResponse))
 
         val result = controller.getContingentTransactions(stcId)(FakeRequest())
+        status(result) shouldBe OK
+      }
+    }
+
+    "getOverdueTransactionsCount" must {
+      "return 200 OK and JSON on success" in {
+
+        when(mockDashboardService.getOverdueTransactions(any()))
+          .thenReturn(Future.successful(response))
+
+        val result = controller.getOverdueTransactionsCount(stcId)(FakeRequest())
+        contentAsJson(result) shouldBe Json.toJson(1)
+        status(result) shouldBe OK
+      }
+    }
+
+    "getReadyToPayTransactionsCount" must {
+      "return 200 OK and JSON on success" in {
+
+        when(mockDashboardService.getReadyToPayTransactions(any()))
+          .thenReturn(Future.successful(response))
+
+        val result = controller.getReadyToPayTransactionsCount(stcId)(FakeRequest())
+        contentAsJson(result) shouldBe Json.toJson(1)
         status(result) shouldBe OK
       }
     }

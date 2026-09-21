@@ -4,3 +4,6 @@ GET   /dashboard/recent-transactions/:stcId        uk.gov.hmrc.securitiestransfe
 GET   /dashboard/ready-to-pay/:stcId               uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getReadyToPayTransactions(stcId: String)
 GET   /dashboard/overdue/:stcId                    uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getOverdueTransactions(stcId: String)
 GET   /dashboard/contingent/:stcId                 uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getContingentTransactions(stcId: String)
+
+GET   /dashboard/ready-to-pay/count/:stcId               uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getReadyToPayTransactionsCount(stcId: String)
+GET   /dashboard/overdue/count/:stcId                    uk.gov.hmrc.securitiestransferchargesearch.controllers.DashboardController.getOverdueTransactionsCount(stcId: String)
