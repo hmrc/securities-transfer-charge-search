@@ -21,13 +21,14 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.securitiestransferchargesearch.services.DashboardService
-import javax.inject.{Inject, Singleton}
+
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class DashboardController @Inject()(
                                      cc: ControllerComponents,
-                                     dashboardService: DashboardService,
+                                     @Named("cache") dashboardService: DashboardService,
                                      val authConnector: AuthConnector
                                    )(implicit ec: ExecutionContext) extends BackendController(cc) with AuthorisedFunctions {
 
