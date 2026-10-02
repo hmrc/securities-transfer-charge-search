@@ -23,7 +23,7 @@ import uk.gov.hmrc.securitiestransferchargesearch.config.AppConfig
 import uk.gov.hmrc.securitiestransferchargesearch.models.*
 
 import java.time.format.DateTimeFormatter
-import java.time.{ZoneOffset, ZonedDateTime}
+import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,9 +35,18 @@ class DashboardServiceImpl @Inject()(
                                     )(implicit ec: ExecutionContext) extends DashboardService {
 
   private def baseUrl: String = appConfig.etmpBaseUrl
-      
+
+  private val etmpDateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+  private[services] def recentSubmissionsDateRange(): String =
+    List(
+      LocalDate.now().minusMonths(appConfig.numberOfMonthsInRecentSubmissions),
+      LocalDate.now()
+    ).map(_.format(etmpDateFormatter))
+      .mkString("-")
+
   override def getRecentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse] = {
-    callEtmpApi(stcId, p1 = "submissionDateRange", v1 = DashboardService.last18months())
+    callEtmpApi(stcId, p1 = "submissionDateRange", v1 = recentSubmissionsDateRange())
   }
 
   override def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse] = {

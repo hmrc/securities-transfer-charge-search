@@ -98,7 +98,7 @@ class DashboardServiceImplSpec
     "getRecentTransactions must pass p1=submissionDateRange and v1=[dateRange]" in {
       when(mockAppConfig.etmpBaseUrl).thenReturn(s"http://localhost:${wireMockServer.port()}")
 
-      val dateRange = DashboardService.last18months()
+      val dateRange = service.recentSubmissionsDateRange()
       stubEtmpResponse(p1 = "submissionDateRange", v1 = dateRange)
 
       val result = service.getRecentTransactions(stcId).futureValue
