@@ -19,9 +19,8 @@ package uk.gov.hmrc.securitiestransferchargesearch.services
 import uk.gov.hmrc.securitiestransferchargesearch.models.EtmpTransactionSummaryResponse
 import scala.concurrent.Future
 
-trait DashboardService {
-  def getRecentTransactions(stcId: String, submissionDateRange: String): Future[EtmpTransactionSummaryResponse]
+trait DashboardService:
+  def getRecentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getOverdueTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getContingentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
-}

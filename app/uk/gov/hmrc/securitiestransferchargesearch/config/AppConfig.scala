@@ -25,3 +25,5 @@ class AppConfig @Inject()(config: Configuration):
   val appName: String = config.get[String]("appName")
 
   val etmpBaseUrl: String = config.get[String]("microservice.services.etmp.url")
+
+  val numberOfMonthsInRecentSubmissions = config.get[Int]("microservice.search.recent-submissions.number-of-months")

@@ -56,7 +56,6 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
   private val unauthorisedController = new DashboardController(cc, mockDashboardService, failingAuthConnector)
 
   private val stcId = "XASTC0012345678"
-  private val dateRange = "2026-01-01"
 
   private val sampleResponse = EtmpTransactionSummaryResponse(
     success = EtmpSuccessResponse(
@@ -89,7 +88,7 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
   "DashboardController" should {
 
     "return 401 Unauthorised if the user is not authenticated" in {
-      val result: Future[Result] = unauthorisedController.getRecentTransactions(stcId, dateRange)(FakeRequest())
+      val result: Future[Result] = unauthorisedController.getRecentTransactions(stcId)(FakeRequest())
 
       status(result) shouldBe UNAUTHORIZED
       (contentAsJson(result) \ "error").as[String] shouldBe "User is not authorised"
@@ -97,20 +96,20 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
 
     "getRecentTransactions" must {
       "return 200 OK and JSON when user is authorised and service returns data" in {
-        when(mockDashboardService.getRecentTransactions(any(), any()))
+        when(mockDashboardService.getRecentTransactions(any()))
           .thenReturn(Future.successful(sampleResponse))
 
-        val result: Future[Result] = controller.getRecentTransactions(stcId, dateRange)(FakeRequest())
+        val result: Future[Result] = controller.getRecentTransactions(stcId)(FakeRequest())
 
         status(result) shouldBe OK
         contentAsJson(result) shouldBe Json.toJson(sampleResponse)
       }
 
       "return 500 InternalServerError when service fails" in {
-        when(mockDashboardService.getRecentTransactions(any(), any()))
+        when(mockDashboardService.getRecentTransactions(any()))
           .thenReturn(Future.failed(new RuntimeException("API Down")))
 
-        val result: Future[Result] = controller.getRecentTransactions(stcId, dateRange)(FakeRequest())
+        val result: Future[Result] = controller.getRecentTransactions(stcId)(FakeRequest())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         (contentAsJson(result) \ "error").as[String] shouldBe "API Down"
