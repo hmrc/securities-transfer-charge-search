@@ -31,9 +31,9 @@ class DashboardController @Inject()(
                                      val authConnector: AuthConnector
                                    )(implicit ec: ExecutionContext) extends BackendController(cc) with AuthorisedFunctions {
 
-  def getRecentTransactions(stcId: String, dateRange: String): Action[AnyContent] = Action.async { implicit request =>
+  def getRecentTransactions(stcId: String): Action[AnyContent] = Action.async { implicit request =>
     authorised() {
-      dashboardService.getRecentTransactions(stcId, dateRange).map { transactions =>
+      dashboardService.getRecentTransactions(stcId).map { transactions =>
         Ok(Json.toJson(transactions))
       }
     }.recover(handleErrors)

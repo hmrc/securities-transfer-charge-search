@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.securitiestransferchargesearch.services
 
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.securitiestransferchargesearch.config.AppConfig
 import uk.gov.hmrc.securitiestransferchargesearch.models.*
-import uk.gov.hmrc.http.HttpReads.Implicits._
+
 import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
@@ -34,9 +35,9 @@ class DashboardServiceImpl @Inject()(
                                     )(implicit ec: ExecutionContext) extends DashboardService {
 
   private def baseUrl: String = appConfig.etmpBaseUrl
-
-  override def getRecentTransactions(stcId: String, submissionDateRange: String): Future[EtmpTransactionSummaryResponse] = {
-    callEtmpApi(stcId, p1 = "submissionDateRange", v1 = submissionDateRange)
+      
+  override def getRecentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse] = {
+    callEtmpApi(stcId, p1 = "submissionDateRange", v1 = DashboardService.last18months())
   }
 
   override def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse] = {

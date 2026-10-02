@@ -17,11 +17,24 @@
 package uk.gov.hmrc.securitiestransferchargesearch.services
 
 import uk.gov.hmrc.securitiestransferchargesearch.models.EtmpTransactionSummaryResponse
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-trait DashboardService {
-  def getRecentTransactions(stcId: String, submissionDateRange: String): Future[EtmpTransactionSummaryResponse]
+trait DashboardService:
+  def getRecentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getOverdueTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getContingentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
-}
+
+
+object DashboardService:
+  private val etmpDateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+  private[services] def last18months(): String =
+    List(
+      LocalDate.now().minusMonths(18),
+      LocalDate.now()
+    ) .map(_.format(etmpDateFormatter))
+      .mkString("-")  
