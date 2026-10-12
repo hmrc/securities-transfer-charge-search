@@ -128,7 +128,7 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
       }
     }
 
-    "getSubmissionSUmmary" must {
+    "getSubmissionSummary" must {
       "return 200 OK and JSON on success" in {
         when(mockDashboardService.getSubmissionSummary(any(), any()))
           .thenReturn(Future.successful(sampleResponse))
