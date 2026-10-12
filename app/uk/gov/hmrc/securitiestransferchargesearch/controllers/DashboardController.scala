@@ -63,24 +63,12 @@ class DashboardController @Inject()(
     }.recover(handleErrors)
   }
 
-
-
-  def getReadyToPayTransactionsCount(stcId: String): Action[AnyContent] = Action.async { implicit request =>
+  def getSubmissionSummary(stcId: String, submissionId: String): Action[AnyContent] = Action.async { implicit request =>
     authorised() {
-      //TODO this will be replaced with a cache layer so that we are not calling etmp every time
-      dashboardService.getReadyToPayTransactions(stcId).map { result =>
-        Ok(Json.toJson(result.success.transactionsCount))
+      dashboardService.getSubmissionSummary(stcId, submissionId).map { transactions =>
+        Ok(Json.toJson(transactions))
       }
-    }
-  }
-
-  def getOverdueTransactionsCount(stcId: String): Action[AnyContent] = Action.async { implicit request =>
-    authorised() {
-      //TODO this will be replaced with a cache layer so that we are not calling etmp every time
-      dashboardService.getOverdueTransactions(stcId).map { result =>
-        Ok(Json.toJson(result.success.transactionsCount))
-      }
-    }
+    }.recover(handleErrors)
   }
 
   private def handleErrors: PartialFunction[Throwable, play.api.mvc.Result] = {

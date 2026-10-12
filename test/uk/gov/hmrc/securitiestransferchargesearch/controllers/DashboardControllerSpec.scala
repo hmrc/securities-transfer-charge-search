@@ -33,7 +33,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.securitiestransferchargesearch.models.*
 import uk.gov.hmrc.securitiestransferchargesearch.services.DashboardService
 
-import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,6 +55,7 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
   private val unauthorisedController = new DashboardController(cc, mockDashboardService, failingAuthConnector)
 
   private val stcId = "XASTC0012345678"
+  private val testSubmissionId = "STC-123456789"
 
   private val sampleResponse = EtmpTransactionSummaryResponse(
     success = EtmpSuccessResponse(
@@ -66,24 +66,6 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
       charges = Some(Seq.empty)
     )
   )
-
-  private val response = EtmpTransactionSummaryResponse(
-    success = EtmpSuccessResponse(
-      processingDate = "2026-09-14T09:30:47Z",
-      transactionsCount = 1,
-      message = None,
-      transactionDetails = Some(Seq(EtmpTransactionDetail(submissionId = "123456789013",
-        submissionDate = LocalDate.now(),
-        clientReference = Some("Ref-12345"),
-        declareeName = "James",
-        utrn = "900459020010",
-        buyerNames = "Paul Mayne",
-        sellerNames = Some("John Brown"),
-        companyName = "Company 1"))),
-      charges = None
-    )
-  )
-
 
   "DashboardController" should {
 
@@ -146,28 +128,15 @@ class DashboardControllerSpec extends AnyWordSpec with Matchers with MockitoSuga
       }
     }
 
-    "getOverdueTransactionsCount" must {
+    "getSubmissionSummary" must {
       "return 200 OK and JSON on success" in {
+        when(mockDashboardService.getSubmissionSummary(any(), any()))
+          .thenReturn(Future.successful(sampleResponse))
 
-        when(mockDashboardService.getOverdueTransactions(any()))
-          .thenReturn(Future.successful(response))
-
-        val result = controller.getOverdueTransactionsCount(stcId)(FakeRequest())
-        contentAsJson(result) shouldBe Json.toJson(1)
+        val result = controller.getSubmissionSummary(stcId, testSubmissionId)(FakeRequest())
         status(result) shouldBe OK
       }
     }
 
-    "getReadyToPayTransactionsCount" must {
-      "return 200 OK and JSON on success" in {
-
-        when(mockDashboardService.getReadyToPayTransactions(any()))
-          .thenReturn(Future.successful(response))
-
-        val result = controller.getReadyToPayTransactionsCount(stcId)(FakeRequest())
-        contentAsJson(result) shouldBe Json.toJson(1)
-        status(result) shouldBe OK
-      }
-    }
   }
 }
