@@ -24,3 +24,11 @@ trait DashboardService:
   def getReadyToPayTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getOverdueTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
   def getContingentTransactions(stcId: String): Future[EtmpTransactionSummaryResponse]
+  def getSubmissionSummary(stcId: String, submissionId: String): Future[EtmpTransactionSummaryResponse]
+
+object DashboardService:
+  enum P1Parameters:
+    case submissionId, submissionDateRange, clientReference, utrn, buyerName, sellerName, companyName
+
+  enum V1Parameters:
+    case unpaid, overdue, contingent
